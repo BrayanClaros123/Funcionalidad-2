@@ -98,9 +98,9 @@ class MainActivity : AppCompatActivity() {
 
     private val speechToTextLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
-    ) { result ->
-        if (result.resultCode == Activity.RESULT_OK && result.data != null) {
-            val matches = result.data!!.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)
+    ) { resultado ->
+        if (resultado.resultCode == Activity.RESULT_OK && resultado.data != null) {
+            val matches = resultado.data!!.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)
             if (!matches.isNullOrEmpty()) {
                 val recognizedText = matches[0]
                 etBuscador.setText(recognizedText)
