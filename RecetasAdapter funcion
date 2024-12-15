@@ -1,0 +1,5 @@
+fun actualizarRecetas(nuevaLista: List<Map<String, Any>>) {
+        (recetas as MutableList).clear()
+        recetas.addAll(nuevaLista)
+        notifyDataSetChanged()
+    }
