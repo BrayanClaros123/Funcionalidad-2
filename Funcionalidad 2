@@ -1,0 +1,143 @@
+package com.example.proyecto_pglh
+
+import android.app.Activity
+import android.content.Intent
+import android.os.Bundle
+import android.speech.RecognizerIntent
+import android.text.Editable
+import android.text.TextWatcher
+import android.widget.EditText
+import android.widget.ImageButton
+import android.widget.TextView
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+
+class MainActivity : AppCompatActivity() {
+
+    lateinit var baseDeDatos: BD
+    lateinit var recetasAdapter: RecetasAdapter
+    lateinit var listaRecetas: MutableList<Map<String, Any>>
+    private lateinit var etBuscador: EditText
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+
+        baseDeDatos = BD(this)
+        listaRecetas = baseDeDatos.obtenerRecetas().toMutableList()
+
+        val recyclerView = findViewById<RecyclerView>(R.id.rvRecetas)
+        recyclerView.layoutManager = LinearLayoutManager(this)
+
+        recetasAdapter = RecetasAdapter(listaRecetas.toMutableList())
+        recyclerView.adapter = recetasAdapter
+
+        recyclerView.adapter = recetasAdapter
+
+        etBuscador = findViewById(R.id.etBuscador)
+        etBuscador.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                filterRecetas(s.toString())
+            }
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+        })
+
+        val btnMicBuscador = findViewById<ImageButton>(R.id.btnMicBuscador)
+        btnMicBuscador.setOnClickListener {
+            iniciarReconocimientoVoz()
+        }
+
+        val usuarioId = intent.getIntExtra("usuarioId", -1)
+        val nombreUsuario = intent.getStringExtra("usuario")
+        if (nombreUsuario != null) {
+            findViewById<TextView>(R.id.tvUsuario).text = "Hola, $nombreUsuario"
+        }
+
+        val btnCrearReceta = findViewById<ImageButton>(R.id.btnCrearReceta)
+        btnCrearReceta.setOnClickListener {
+            val intent = Intent(this, CrearRecetaActivity::class.java)
+            intent.putExtra("usuarioId", usuarioId)
+            crearRecetaLauncher.launch(intent)
+        }
+
+        val btnPlanificar = findViewById<ImageButton>(R.id.btnPlanificacion)
+        btnPlanificar.setOnClickListener {
+            val intent = Intent(this, PlanificarComidaActivity::class.java)
+            startActivity(intent)
+        }
+
+        val btnMetaAgua = findViewById<ImageButton>(R.id.btnMetasAgua)
+        btnMetaAgua.setOnClickListener {
+            val intent = Intent(this, MetaAguaActivity::class.java)
+            intent.putExtra("usuarioId", usuarioId)
+            startActivity(intent)
+        }
+
+        val btnPerfilUsuario = findViewById<ImageButton>(R.id.btnPerfil)
+        btnPerfilUsuario.setOnClickListener {
+            val intent = Intent(this, PerfilUsuarioActivity::class.java)
+            intent.putExtra("USUARIO_ID", usuarioId)
+            startActivity(intent)
+        }
+    }
+
+    private val crearRecetaLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            listaRecetas.clear()
+            listaRecetas.addAll(baseDeDatos.obtenerRecetas())
+            recetasAdapter.notifyDataSetChanged()
+        }
+    }
+
+    private val speechToTextLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == Activity.RESULT_OK && result.data != null) {
+            val matches = result.data!!.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)
+            if (!matches.isNullOrEmpty()) {
+                val recognizedText = matches[0]
+                etBuscador.setText(recognizedText)
+                filterRecetas(recognizedText)
+
+                Toast.makeText(this, "Buscando: $recognizedText", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(this, "No se reconoció texto", Toast.LENGTH_SHORT).show()
+            }
+        } else {
+            Toast.makeText(this, "Error al procesar el reconocimiento de voz", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun iniciarReconocimientoVoz() {
+        val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
+            putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
+            putExtra(RecognizerIntent.EXTRA_LANGUAGE, "es-ES") 
+            putExtra(RecognizerIntent.EXTRA_PROMPT, "Di algo para buscar")
+        }
+        speechToTextLauncher.launch(intent)
+    }
+
+    fun filterRecetas(query: String) {
+        val recetasFiltradas = baseDeDatos.obtenerRecetas().filter {
+            (it["nombreComida"] as? String)?.contains(query, ignoreCase = true) == true ||
+                    (it["ingredientes"] as? String)?.contains(query, ignoreCase = true) == true ||
+                    (it["tipo"] as? String)?.contains(query, ignoreCase = true) == true
+        }
+
+        recetasAdapter.actualizarRecetas(recetasFiltradas) 
+    }
+
+    override fun onResume() {
+        super.onResume()
+        listaRecetas.clear()
+        listaRecetas.addAll(baseDeDatos.obtenerRecetas())
+        recetasAdapter.notifyDataSetChanged()
+    }
+}
