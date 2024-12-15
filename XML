@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#FFFFFF">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="#4C662B"
+        android:gravity="center"
+        android:padding="16dp">
+
+        <TextView
+            android:id="@+id/tvHealthy"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="HEALTHY"
+            android:textColor="#FFFFFF"
+            android:textSize="32sp"
+            android:gravity="center"
+            android:textStyle="bold" />
+
+        <ImageView
+            android:id="@+id/logo"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/logo"
+            android:contentDescription="Logo de la aplicación"
+            android:layout_marginStart="16dp"
+            android:layout_gravity="center"
+            app:tint="#FFFFFFFF" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="16dp"
+        android:gravity="center_vertical">
+
+        <EditText
+            android:id="@+id/etBuscador"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="Buscar recetas"
+            android:padding="8dp"
+            android:background="@android:drawable/edit_text"
+            android:inputType="text" />
+
+        <ImageButton
+            android:id="@+id/btnMicBuscador"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="8dp"
+            android:src="@drawable/ic_microfono"
+            android:contentDescription="Buscar por voz"
+            android:background="?attr/selectableItemBackground"
+            android:scaleType="centerInside" />
+
+        <TextView
+            android:id="@+id/tvUsuario"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:text="Hola, Usuario"
+            android:textStyle="bold"
+            android:textSize="16sp" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#CCCCCC" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvRecetas"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:padding="16dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="#4C662B"
+        android:padding="8dp"
+        android:gravity="center">
+
+        <ImageButton
+            android:id="@+id/btnInicio"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:src="@drawable/ic_inicio"
+            android:contentDescription="Inicio"
+            android:background="?attr/selectableItemBackground"
+            android:scaleType="centerInside" />
+
+        <ImageButton
+            android:id="@+id/btnPlanificacion"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:src="@drawable/ic_calendario"
+            android:contentDescription="Planificación semanal"
+            android:background="?attr/selectableItemBackground"
+            android:scaleType="centerInside" />
+
+        <ImageButton
+            android:id="@+id/btnCrearReceta"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:src="@drawable/ic_anadir"
+            android:contentDescription="Crear receta"
+            android:background="@color/cardview_dark_background"
+            android:scaleType="centerInside" />
+
+        <ImageButton
+            android:id="@+id/btnMetasAgua"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:src="@drawable/ic_agua"
+            android:contentDescription="Metas de agua"
+            android:background="?attr/selectableItemBackground"
+            android:scaleType="centerInside" />
+
+        <ImageButton
+            android:id="@+id/btnPerfil"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:src="@drawable/ic_perfil"
+            android:contentDescription="Perfil"
+            android:background="?attr/selectableItemBackground"
+            android:scaleType="centerInside" />
+    </LinearLayout>
+</LinearLayout>
